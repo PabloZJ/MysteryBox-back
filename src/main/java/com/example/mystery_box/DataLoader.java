@@ -1,27 +1,25 @@
 package com.example.mystery_box;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.example.mystery_box.model.Producto;
 import com.example.mystery_box.model.Categoria;
-import com.example.mystery_box.model.Usuario;
-import com.example.mystery_box.model.Rol;
-import com.example.mystery_box.model.MetodoPago;
 import com.example.mystery_box.model.MetodoEnvio;
-
-import com.example.mystery_box.repository.ProductoRepository;
+import com.example.mystery_box.model.MetodoPago;
+import com.example.mystery_box.model.Producto;
+import com.example.mystery_box.model.Rol;
+import com.example.mystery_box.model.Usuario;
 import com.example.mystery_box.repository.CategoriaRepository;
-import com.example.mystery_box.repository.UsuarioRepository;
-import com.example.mystery_box.repository.RolRepository;
-import com.example.mystery_box.repository.MetodoPagoRepository;
 import com.example.mystery_box.repository.MetodoEnvioRepository;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.List;
-import java.util.Arrays;
+import com.example.mystery_box.repository.MetodoPagoRepository;
+import com.example.mystery_box.repository.ProductoRepository;
+import com.example.mystery_box.repository.RolRepository;
+import com.example.mystery_box.repository.UsuarioRepository;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -122,7 +120,5 @@ public class DataLoader implements CommandLineRunner {
                 metodoEnvioRepository.save(envio);
             }
         }
-
-        System.out.println("DataLoader ejecutado: datos iniciales creados si no existían.");
     }
 }
