@@ -1,6 +1,7 @@
 package com.example.mystery_box.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.example.mystery_box.model.Usuario;
 import com.example.mystery_box.service.UsuarioService;
 
@@ -75,8 +77,22 @@ public class UsuarioController {
     //login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Usuario usuario) {
-        Usuario login = usuarioService.login(usuario.getCorreo(), usuario.getContrasena());
-        if (login != null) return ResponseEntity.ok(login);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
+        try {
+            if (usuario.getCorreo() == null || usuario.getContrasena() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Correo o contraseña vacíos");
+            }
+            Usuario login = usuarioService.login(usuario.getCorreo(), usuario.getContrasena());
+            if (login != null) {
+                return ResponseEntity.ok(login);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Credenciales inválidas");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body("Error interno del servidor");
+        }
     }
 }
