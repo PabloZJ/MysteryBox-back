@@ -67,8 +67,7 @@ public class UsuarioController {
         usuarioService.eliminarUsuario(id);
         return ResponseEntity.noContent().build();
     }
-
-    // ✅ Login seguro
+    
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Usuario usuario) {
         try {

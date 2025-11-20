@@ -1,5 +1,6 @@
 package com.example.mystery_box.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
@@ -37,5 +38,6 @@ public class Usuario {
 
     @ManyToOne
     @JoinColumn(name = "id_rol", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Rol rol;
 }
