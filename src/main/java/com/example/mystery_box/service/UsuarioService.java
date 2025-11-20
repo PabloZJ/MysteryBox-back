@@ -36,9 +36,7 @@ public class UsuarioService {
     }
 
     public Usuario obtenerUsuarioPorId(Long id) {
-        Usuario usuario = usuarioRepository.findById(id).orElse(null);
-        if (usuario != null) usuario.setContrasena(null);
-        return usuario;
+        return usuarioRepository.findById(id).orElse(null);
     }
 
     public Usuario guardarUsuario(Usuario usuario) {
@@ -83,22 +81,23 @@ public class UsuarioService {
     }
 
     public Usuario obtenerUsuarioPorCorreo(String correo) {
-        Usuario usuario = usuarioRepository.findByCorreo(correo);
-        if (usuario != null) usuario.setContrasena(null);
-        return usuario;
+        return usuarioRepository.findByCorreo(correo);
     }
 
     public List<Usuario> obtenerUsuariosPorRolId(Long rolId) {
-        List<Usuario> usuarios = usuarioRepository.findByRolId(rolId);
-        usuarios.forEach(u -> u.setContrasena(null));
-        return usuarios;
+        return usuarioRepository.findByRolId(rolId);
     }
-    public Usuario login(String correo, String contrasena) {
+
+    // Método para validar login internamente
+    public boolean validarLogin(String correo, String contrasena) {
         Usuario usuario = usuarioRepository.findByCorreo(correo);
-        if (usuario != null && passwordEncoder.matches(contrasena, usuario.getContrasena())) {
-            usuario.setContrasena(null);
-            return usuario;
-        }
-        return null;
+        return usuario != null && passwordEncoder.matches(contrasena, usuario.getContrasena());
+    }
+
+    // Método que devuelve el usuario completo (sin null) para el frontend, se puede usar en el controlador
+    public Usuario obtenerUsuarioParaFrontend(String correo) {
+        Usuario usuario = usuarioRepository.findByCorreo(correo);
+        if (usuario != null) usuario.setContrasena(null); // solo aquí ocultamos la contraseña
+        return usuario;
     }
 }

@@ -29,6 +29,7 @@ public class UsuarioController {
     public ResponseEntity<List<Usuario>> obtenerTodosLosUsuarios() {
         List<Usuario> usuarios = usuarioService.obtenerUsuarios();
         if (usuarios.isEmpty()) return ResponseEntity.noContent().build();
+        usuarios.forEach(u -> u.setContrasena(null)); // ocultar contraseñas para frontend
         return ResponseEntity.ok(usuarios);
     }
 
@@ -36,6 +37,7 @@ public class UsuarioController {
     public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable Long id) {
         Usuario usuario = usuarioService.obtenerUsuarioPorId(id);
         if (usuario == null) return ResponseEntity.notFound().build();
+        usuario.setContrasena(null); // ocultar contraseña para frontend
         return ResponseEntity.ok(usuario);
     }
 
@@ -70,8 +72,12 @@ public class UsuarioController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Usuario usuario) {
-        Usuario login = usuarioService.login(usuario.getCorreo(), usuario.getContrasena());
-        if (login == null) return ResponseEntity.status(401).body("Credenciales inválidas");
-        return ResponseEntity.ok(login);
+        // Validar login internamente
+        boolean valido = usuarioService.validarLogin(usuario.getCorreo(), usuario.getContrasena());
+        if (!valido) return ResponseEntity.status(401).body("Credenciales inválidas");
+
+        // Obtener usuario completo para devolver al frontend (contrasena en null)
+        Usuario usuarioFrontend = usuarioService.obtenerUsuarioParaFrontend(usuario.getCorreo());
+        return ResponseEntity.ok(usuarioFrontend);
     }
 }
