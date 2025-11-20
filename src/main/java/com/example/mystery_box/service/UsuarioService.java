@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.mystery_box.model.Direccion;
 import com.example.mystery_box.model.Usuario;
-import com.example.mystery_box.model.Venta;
 import com.example.mystery_box.repository.DireccionRepository;
 import com.example.mystery_box.repository.UsuarioRepository;
 import com.example.mystery_box.repository.VentaRepository;
@@ -47,36 +45,32 @@ public class UsuarioService {
     }
 
     public Usuario actualizarUsuario(Long id, Usuario usuario) {
-        Usuario existente = usuarioRepository.findById(id).orElse(null);
-        if (existente != null) {
+        return usuarioRepository.findById(id).map(existente -> {
             existente.setCorreo(usuario.getCorreo());
-            if (usuario.getContrasena() != null) {
+            if (usuario.getContrasena() != null && !usuario.getContrasena().isBlank()) {
                 existente.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
             }
             existente.setRol(usuario.getRol());
             return usuarioRepository.save(existente);
-        }
-        return null;
+        }).orElse(null);
     }
 
     public Usuario actualizarUsuarioParcial(Long id, Usuario usuario) {
-        Usuario existente = usuarioRepository.findById(id).orElse(null);
-        if (existente != null) {
+        return usuarioRepository.findById(id).map(existente -> {
             if (usuario.getCorreo() != null) existente.setCorreo(usuario.getCorreo());
-            if (usuario.getContrasena() != null) existente.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+            if (usuario.getContrasena() != null && !usuario.getContrasena().isBlank()) {
+                existente.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+            }
             if (usuario.getRol() != null) existente.setRol(usuario.getRol());
             return usuarioRepository.save(existente);
-        }
-        return null;
+        }).orElse(null);
     }
 
     public void eliminarUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        List<Direccion> direcciones = direccionRepository.findByUsuarioId(id);
-        for (Direccion direccion : direcciones) direccionRepository.delete(direccion);
-        List<Venta> ventas = ventaRepository.findByUsuarioId(id);
-        for (Venta venta : ventas) ventaRepository.delete(venta);
+        direccionRepository.findByUsuarioId(id).forEach(direccionRepository::delete);
+        ventaRepository.findByUsuarioId(id).forEach(ventaRepository::delete);
         usuarioRepository.delete(usuario);
     }
 
@@ -84,20 +78,18 @@ public class UsuarioService {
         return usuarioRepository.findByCorreo(correo);
     }
 
-    public List<Usuario> obtenerUsuariosPorRolId(Long rolId) {
-        return usuarioRepository.findByRolId(rolId);
-    }
-
-    // Método para validar login internamente
     public boolean validarLogin(String correo, String contrasena) {
         Usuario usuario = usuarioRepository.findByCorreo(correo);
         return usuario != null && passwordEncoder.matches(contrasena, usuario.getContrasena());
     }
 
-    // Método que devuelve el usuario completo (sin null) para el frontend, se puede usar en el controlador
-    public Usuario obtenerUsuarioParaFrontend(String correo) {
-        Usuario usuario = usuarioRepository.findByCorreo(correo);
-        if (usuario != null) usuario.setContrasena(null); // solo aquí ocultamos la contraseña
-        return usuario;
+    // Devuelve un DTO/objeto solo con datos visibles al frontend
+    public Usuario usuarioParaFrontend(Usuario usuario) {
+        if (usuario == null) return null;
+        Usuario copia = new Usuario();
+        copia.setId(usuario.getId());
+        copia.setCorreo(usuario.getCorreo());
+        copia.setRol(usuario.getRol());
+        return copia; // sin contraseña
     }
 }

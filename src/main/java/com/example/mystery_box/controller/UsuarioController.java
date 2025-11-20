@@ -27,41 +27,39 @@ public class UsuarioController {
 
     @GetMapping
     public ResponseEntity<List<Usuario>> obtenerTodosLosUsuarios() {
-        List<Usuario> usuarios = usuarioService.obtenerUsuarios();
+        List<Usuario> usuarios = usuarioService.obtenerUsuarios().stream()
+            .map(usuarioService::usuarioParaFrontend)
+            .toList();
         if (usuarios.isEmpty()) return ResponseEntity.noContent().build();
-        usuarios.forEach(u -> u.setContrasena(null)); // ocultar contraseñas para frontend
         return ResponseEntity.ok(usuarios);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable Long id) {
-        Usuario usuario = usuarioService.obtenerUsuarioPorId(id);
+        Usuario usuario = usuarioService.usuarioParaFrontend(usuarioService.obtenerUsuarioPorId(id));
         if (usuario == null) return ResponseEntity.notFound().build();
-        usuario.setContrasena(null); // ocultar contraseña para frontend
         return ResponseEntity.ok(usuario);
     }
 
     @PostMapping
     public ResponseEntity<Usuario> crearUsuario(@RequestBody Usuario usuario) {
-        Usuario nuevoUsuario = usuarioService.guardarUsuario(usuario);
-        nuevoUsuario.setContrasena(null); // nunca devolver contraseña
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+        Usuario nuevo = usuarioService.guardarUsuario(usuario);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(usuarioService.usuarioParaFrontend(nuevo));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
         Usuario actualizado = usuarioService.actualizarUsuario(id, usuario);
         if (actualizado == null) return ResponseEntity.notFound().build();
-        actualizado.setContrasena(null);
-        return ResponseEntity.ok(actualizado);
+        return ResponseEntity.ok(usuarioService.usuarioParaFrontend(actualizado));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<Usuario> actualizarParcialUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
         Usuario actualizado = usuarioService.actualizarUsuarioParcial(id, usuario);
         if (actualizado == null) return ResponseEntity.notFound().build();
-        actualizado.setContrasena(null);
-        return ResponseEntity.ok(actualizado);
+        return ResponseEntity.ok(usuarioService.usuarioParaFrontend(actualizado));
     }
 
     @DeleteMapping("/{id}")
@@ -72,12 +70,10 @@ public class UsuarioController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Usuario usuario) {
-        // Validar login internamente
         boolean valido = usuarioService.validarLogin(usuario.getCorreo(), usuario.getContrasena());
         if (!valido) return ResponseEntity.status(401).body("Credenciales inválidas");
 
-        // Obtener usuario completo para devolver al frontend (contrasena en null)
-        Usuario usuarioFrontend = usuarioService.obtenerUsuarioParaFrontend(usuario.getCorreo());
-        return ResponseEntity.ok(usuarioFrontend);
+        Usuario completo = usuarioService.obtenerUsuarioPorCorreo(usuario.getCorreo());
+        return ResponseEntity.ok(usuarioService.usuarioParaFrontend(completo));
     }
 }

@@ -19,7 +19,7 @@ public class CorsConfig {
                                 "http://localhost:3000",
                                 "https://mysterybox-back.onrender.com"
                         )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE"," PATCH")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
