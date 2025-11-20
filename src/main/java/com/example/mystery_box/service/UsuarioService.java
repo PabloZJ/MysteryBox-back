@@ -94,14 +94,11 @@ public class UsuarioService {
         return usuarios;
     }
     public Usuario login(String correo, String contrasena) {
-    if (correo == null || contrasena == null) return null;
-    Usuario usuario = usuarioRepository.findByCorreo(correo);
-    if (usuario != null && usuario.getContrasena() != null &&
-        passwordEncoder.matches(contrasena, usuario.getContrasena())) {
-        if (usuario.getRol() != null) usuario.getRol().getNombre();
-        usuario.setContrasena(null);
-        return usuario;
+        Usuario usuario = usuarioRepository.findByCorreo(correo);
+        if (usuario != null && passwordEncoder.matches(contrasena, usuario.getContrasena())) {
+            usuario.setContrasena(null);
+            return usuario;
+        }
+        return null;
     }
-    return null;
-}
 }

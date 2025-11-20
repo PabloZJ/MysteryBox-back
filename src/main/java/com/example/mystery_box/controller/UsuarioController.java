@@ -67,19 +67,11 @@ public class UsuarioController {
         usuarioService.eliminarUsuario(id);
         return ResponseEntity.noContent().build();
     }
-    
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Usuario usuario) {
-        try {
-            if (usuario == null || usuario.getCorreo() == null || usuario.getContrasena() == null) {
-                return ResponseEntity.badRequest().body("Correo y contraseña son requeridos");
-            }
-            Usuario login = usuarioService.login(usuario.getCorreo(), usuario.getContrasena());
-            if (login != null) return ResponseEntity.ok(login);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor");
-        }
+        Usuario login = usuarioService.login(usuario.getCorreo(), usuario.getContrasena());
+        if (login == null) return ResponseEntity.status(401).body("Credenciales inválidas");
+        return ResponseEntity.ok(login);
     }
 }
