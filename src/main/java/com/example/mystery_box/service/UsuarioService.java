@@ -83,10 +83,10 @@ public class UsuarioService {
         return usuario != null && passwordEncoder.matches(contrasena, usuario.getContrasena());
     }
 
-    // Devuelve un DTO/objeto solo con datos visibles al frontend
     public Usuario usuarioParaFrontend(Usuario usuario) {
         if (usuario == null) return null;
         Usuario copia = new Usuario();
+        copia.setUsername(usuario.getUsername());
         copia.setId(usuario.getId());
         copia.setCorreo(usuario.getCorreo());
         copia.setRol(usuario.getRol());
