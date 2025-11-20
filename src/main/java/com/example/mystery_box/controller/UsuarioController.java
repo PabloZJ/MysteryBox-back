@@ -31,18 +31,21 @@ public class UsuarioController {
         if (usuarios.isEmpty()) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(usuarios);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable Long id) {
         Usuario usuario = usuarioService.obtenerUsuarioPorId(id);
         if (usuario == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(usuario);
     }
+
     @PostMapping
     public ResponseEntity<Usuario> crearUsuario(@RequestBody Usuario usuario) {
         Usuario nuevoUsuario = usuarioService.guardarUsuario(usuario);
         nuevoUsuario.setContrasena(null); // nunca devolver contraseña
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
         Usuario actualizado = usuarioService.actualizarUsuario(id, usuario);
@@ -50,6 +53,7 @@ public class UsuarioController {
         actualizado.setContrasena(null);
         return ResponseEntity.ok(actualizado);
     }
+
     @PatchMapping("/{id}")
     public ResponseEntity<Usuario> actualizarParcialUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
         Usuario actualizado = usuarioService.actualizarUsuarioParcial(id, usuario);
@@ -57,42 +61,26 @@ public class UsuarioController {
         actualizado.setContrasena(null);
         return ResponseEntity.ok(actualizado);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
         usuarioService.eliminarUsuario(id);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/correo/{correo}")
-    public ResponseEntity<Usuario> obtenerUsuarioPorCorreo(@PathVariable String correo) {
-        Usuario usuario = usuarioService.obtenerUsuarioPorCorreo(correo);
-        if (usuario == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(usuario);
-    }
-    @GetMapping("/rol/{rolId}")
-    public ResponseEntity<List<Usuario>> obtenerUsuariosPorRol(@PathVariable Long rolId) {
-        List<Usuario> usuarios = usuarioService.obtenerUsuariosPorRolId(rolId);
-        if (usuarios.isEmpty()) return ResponseEntity.noContent().build();
-        return ResponseEntity.ok(usuarios);
-    }
-    //login
+
+    // ✅ Login seguro
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Usuario usuario) {
         try {
-            if (usuario.getCorreo() == null || usuario.getContrasena() == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Correo o contraseña vacíos");
+            if (usuario == null || usuario.getCorreo() == null || usuario.getContrasena() == null) {
+                return ResponseEntity.badRequest().body("Correo y contraseña son requeridos");
             }
             Usuario login = usuarioService.login(usuario.getCorreo(), usuario.getContrasena());
-            if (login != null) {
-                return ResponseEntity.ok(login);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("Credenciales inválidas");
-            }
+            if (login != null) return ResponseEntity.ok(login);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                .body("Error interno del servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor");
         }
     }
 }
