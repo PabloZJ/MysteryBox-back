@@ -98,6 +98,7 @@ public class UsuarioService {
     Usuario usuario = usuarioRepository.findByCorreo(correo);
     if (usuario != null && usuario.getContrasena() != null &&
         passwordEncoder.matches(contrasena, usuario.getContrasena())) {
+        if (usuario.getRol() != null) usuario.getRol().getNombre();
         usuario.setContrasena(null);
         return usuario;
     }
