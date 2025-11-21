@@ -12,5 +12,4 @@ public interface VentaProductoRepository extends JpaRepository<VentaProducto, Lo
 
     List<VentaProducto> findByVentaId(Long ventaId);
     List<VentaProducto> findByProductoId(Long productoId);
-    List<VentaProducto> findByUsuarioId(Long usuarioId);
 }

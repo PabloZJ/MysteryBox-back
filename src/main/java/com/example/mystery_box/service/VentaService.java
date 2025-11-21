@@ -87,6 +87,7 @@ public class VentaService {
         for (VentaProducto vp : productos) {
             ventaProductoRepository.delete(vp);
         }
+        
         ventaRepository.delete(venta);
     }
     public List<Venta> obtenerVentasPorUsuarioId(Long usuarioId) {

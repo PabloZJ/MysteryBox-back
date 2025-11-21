@@ -1,15 +1,18 @@
 package com.example.mystery_box.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.mystery_box.model.Producto;
+
 import com.example.mystery_box.model.Categoria;
 import com.example.mystery_box.model.Imagen;
+import com.example.mystery_box.model.Producto;
 import com.example.mystery_box.model.VentaProducto;
-import com.example.mystery_box.repository.ProductoRepository;
 import com.example.mystery_box.repository.ImagenRepository;
+import com.example.mystery_box.repository.ProductoRepository;
 import com.example.mystery_box.repository.VentaProductoRepository;
+
 import jakarta.transaction.Transactional;
 
 @Service
