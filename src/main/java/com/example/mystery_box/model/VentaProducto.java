@@ -1,5 +1,7 @@
 package com.example.mystery_box.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,6 +27,7 @@ public class VentaProducto {
 
     @ManyToOne
     @JoinColumn(name = "id_venta", nullable = false)
+    @JsonBackReference  // evita serialización infinita
     private Venta venta;
 
     @ManyToOne

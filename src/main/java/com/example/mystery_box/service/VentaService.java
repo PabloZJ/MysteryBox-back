@@ -1,11 +1,16 @@
 package com.example.mystery_box.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.mystery_box.model.Venta;
+
 import com.example.mystery_box.model.Estado;
+import com.example.mystery_box.model.Venta;
+import com.example.mystery_box.model.VentaProducto;
+import com.example.mystery_box.repository.VentaProductoRepository;
 import com.example.mystery_box.repository.VentaRepository;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -14,6 +19,9 @@ public class VentaService {
 
     @Autowired
     private VentaRepository ventaRepository;
+
+    @Autowired
+    private VentaProductoRepository ventaProductoRepository;
 
     // Obtener todas las ventas
     public List<Venta> obtenerVentas() {
@@ -75,6 +83,10 @@ public class VentaService {
     public void eliminarVenta(Long id) {
         Venta venta = ventaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+        List<VentaProducto> productos = ventaProductoRepository.findByVentaId(id);
+        for (VentaProducto vp : productos) {
+            ventaProductoRepository.delete(vp);
+        }
         ventaRepository.delete(venta);
     }
     public List<Venta> obtenerVentasPorUsuarioId(Long usuarioId) {

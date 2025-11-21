@@ -3,6 +3,8 @@ package com.example.mystery_box.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -50,5 +52,6 @@ public class Venta {
     private MetodoEnvio metodoEnvio;
 
     @OneToMany(mappedBy = "venta")
+    @JsonManagedReference  // evita serialización infinita
     private List<VentaProducto> productos;
 }
