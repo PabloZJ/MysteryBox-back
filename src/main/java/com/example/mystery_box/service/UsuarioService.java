@@ -57,6 +57,9 @@ public class UsuarioService {
 
     public Usuario actualizarUsuarioParcial(Long id, Usuario usuario) {
         return usuarioRepository.findById(id).map(existente -> {
+            if (usuario.getUsername() != null && !usuario.getUsername().isBlank()) {
+                existente.setUsername(usuario.getUsername());
+            }
             if (usuario.getCorreo() != null) existente.setCorreo(usuario.getCorreo());
             if (usuario.getContrasena() != null && !usuario.getContrasena().isBlank()) {
                 existente.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
@@ -90,6 +93,6 @@ public class UsuarioService {
         copia.setId(usuario.getId());
         copia.setCorreo(usuario.getCorreo());
         copia.setRol(usuario.getRol());
-        return copia; // sin contraseña
+        return copia;
     }
 }
