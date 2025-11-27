@@ -17,7 +17,8 @@ public class CorsConfig {
                         .allowedOrigins(
                                 "http://localhost:5173",
                                 "http://localhost:3000",
-                                "https://sneekicks-backend.onrender.com"
+                                "https://mysterybox-back.onrender.com"
+                                "https://mystery-box2-unvw-git-master-paazunigas-projects.vercel.app"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
                         .allowedHeaders("*")
